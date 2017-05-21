@@ -12,8 +12,8 @@ def xgboost_model(X_train,y):
 	param['colsample_bytree'] = 0.7
 	param['seed'] = 321
 	param['nthread'] = 8
-	num_rounds = 20
+	num_rounds = 10
 
-	xgtrain = xgb.DMatrix(X_train, label=y)
+	xgtrain = xgb.DMatrix(X_train,y)
 	clf = xgb.train(param, xgtrain, num_rounds)
 	return clf

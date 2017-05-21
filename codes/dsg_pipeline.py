@@ -19,7 +19,7 @@ def main():
     print "Starting transformations"
     # X_train,X_test = transform_data(X_train),transform_data(X_test) 
     y = X_train['is_listened'].ravel()
-    fe.features_to_add(X_train,X_test,validation=is_validation)
+    #fe.features_to_add(X_train,X_test,validation=is_validation)
     print "Normalizing high cordiality data"
     # normalize_high_cordiality_data()
     # transform_categorical_data()
@@ -31,9 +31,9 @@ def main():
     y_train_true = X_train["is_listened"].ravel()
     del X_train["is_listened"]
 
-    # clf = models.xgboost_model(X_train,label=y)
-    clf = RandomForestClassifier(n_jobs=2,max_depth=13,n_estimators=20)
-    clf.fit(X_train,y)
+    clf = models.xgboost_model(X_train,y)
+    #clf = RandomForestClassifier(n_jobs=2,max_depth=13,n_estimators=20)
+    #clf.fit(X_train,y)
 
 
     print "Fitted"
