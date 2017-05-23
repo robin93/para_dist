@@ -5,34 +5,51 @@ import matplotlib.pyplot as plt
 
 
 def features_to_add(X_train,X_test,validation):
-	add_is_listened_avg(X_train,X_test,validation)
+	#add_is_listened_avg(X_train,X_test,validation)
 	# add_is_listened_on_flow_avg(X_train,X_test)
-	# one_hot_encoding_context(X_train,X_test)
-	# song_age(X_train,X_test)
+	#one_hot_encoding_context(X_train,X_test)
+	#add_artist_api_data(X_train,X_test)
+        #song_api_data(X_train,X_test)
+        #song_age(X_train,X_test)
 	# user_age_song_age(X_train,X_test)
-	# add_song_is_listened_avg(X_train,X_test,validation=is_validation)
+	#add_song_is_listened_avg(X_train,X_test,validation)
 	# add_genre_is_listened_avg(X_train,X_test,validation=is_validation)
-	# X_train["platform_family_feat"] = X_train["platform_family"].apply(lambda x: 1 if x in [1,2] else 0)
-	# X_test["platform_family_feat"] = X_test["platform_family"].apply(lambda x: 1 if x in [1,2] else 0)
-	# X_train["platform_type_0"] = X_train["platform_name"].apply(lambda x: 1 if x==0 else 0)
-	# X_test["platform_type_0"] = X_test["platform_name"].apply(lambda x: 1 if x==0 else 0)
-	# X_train["platform_type_1"] = X_train["platform_name"].apply(lambda x: 1 if x==1 else 0)
-	# X_test["platform_type_1"] = X_test["platform_name"].apply(lambda x: 1 if x==1 else 0)
-	# X_train["platform_type_2"] = X_train["platform_name"].apply(lambda x: 1 if x==2 else 0)
-	# X_test["platform_type_2"] = X_test["platform_name"].apply(lambda x: 1 if x==2 else 0)
+	#X_train["platform_family_feat"] = X_train["platform_family"].apply(lambda x: 1 if x in [1,2] else 0)
+	#X_test["platform_family_feat"] = X_test["platform_family"].apply(lambda x: 1 if x in [1,2] else 0)
+	#X_train["platform_type_0"] = X_train["platform_name"].apply(lambda x: 1 if x==0 else 0)
+	#X_test["platform_type_0"] = X_test["platform_name"].apply(lambda x: 1 if x==0 else 0)
+	#X_train["platform_type_1"] = X_train["platform_name"].apply(lambda x: 1 if x==1 else 0)
+	#X_test["platform_type_1"] = X_test["platform_name"].apply(lambda x: 1 if x==1 else 0)
+	#X_train["platform_type_2"] = X_train["platform_name"].apply(lambda x: 1 if x==2 else 0)
+	#X_test["platform_type_2"] = X_test["platform_name"].apply(lambda x: 1 if x==2 else 0)
 	# avg_time_user_listen_song(X_train,X_test)
-	# X_train["high_listen_hour"] = X_train["ts_listen"].apply(lambda x: 1 if datetime.fromtimestamp(x).hour in [7,8,9,10,14,15,16,20] else 0)
-	# X_test["high_listen_hour"] = X_test["ts_listen"].apply(lambda x: 1 if datetime.fromtimestamp(x).hour in [7,8,9,10,14,15,16,20] else 0)
+	#X_train["high_listen_hour"] = X_train["ts_listen"].apply(lambda x: 1 if datetime.fromtimestamp(x).hour in [7,8,9,10,14,15,16,20] else 0)
+	#X_test["high_listen_hour"] = X_test["ts_listen"].apply(lambda x: 1 if datetime.fromtimestamp(x).hour in [7,8,9,10,14,15,16,20] else 0)
 	# add_user_total_len(X_train,X_test)
 	# first_time_on_flow(X_train,X_test)
-	number_of_rows_for_user(X_train,X_test)
+	#number_of_rows_for_user(X_train,X_test)
 	# user_time_to_test_listen(X_train,X_test)
 	# user_listen_changes_factor(X_train,X_test)
-	add_artist_api_data(X_train,X_test)
-	song_api_data(X_train,X_test)
+	#add_artist_api_data(X_train,X_test)
+	#song_api_data(X_train,X_test)
 	# previous_is_listened(X_train,X_test)
+        #one_hot_encoding_context(X_train,X_test)
+        user_country_assignment(X_train,X_test)
 
-
+def user_country_assignment(X_train,X_test):
+    with open("../files/user_country_dict.json") as datafile:
+        user_country_dict = json.load(datafile)
+    user_set = set(user_country_dict.keys())
+    print "writing for france"
+    X_train["is_france"] = X_train["user_id"].apply(lambda x: 1 if str(x) in user_set and user_country_dict[str(x)]=="FR" else 0)
+    X_test["is_france"] = X_test["user_id"].apply(lambda x: 1 if str(x) in user_set and user_country_dict[str(x)]=="FR" else 0)
+    print "writing for US"
+    X_train["is_US"] = X_train["user_id"].apply(lambda x: 1 if str(x) in user_set and user_country_dict[str(x)]=="US" else 0)
+    X_test["is_US"] = X_test["user_id"].apply(lambda x: 1 if str(x) in user_set and user_country_dict[str(x)]=="US" else 0)
+    print "writing for GB"
+    X_train["is_GB"] = X_train["user_id"].apply(lambda x: 1 if str(x) in user_set and user_country_dict[str(x)]=="GB" else 0)        
+    X_test["is_GB"] = X_test["user_id"].apply(lambda x: 1 if str(x) in user_set and user_country_dict[str(x)]=="GB" else 0)
+        
 
 # X_train = pd.read_csv("../data/trainval_train.csv",nrows=1000)
 # X_train = pd.read_csv("../data/train.csv")
@@ -480,61 +497,66 @@ def add_genre_is_listened_avg(X_train,X_test,validation):
 	X_test["genre_list_avg"] = X_test["genre_id"].apply(lambda x: genre_avg_list_dict[str(x)])
 
 def add_song_is_listened_avg(X_train,X_test,validation):
-	# subset = X_train[["media_id","is_listened"]]
-	# song_pivot = pd.pivot_table(subset,values="is_listened",index="media_id",aggfunc=np.mean)
-	# song_avg_list_dict = dict()
-	# song_list = song_pivot.index.values
-	# avg_list_list = list(song_pivot)
-	# test_song_list = X_test["media_id"].unique().ravel()
-	# test_song_not_in_train = []
-	# for test_song in test_song_list:
-	# 	if test_song not in song_list:
-	# 		test_song_not_in_train.append(test_song)
-	# for i in range(0,len(avg_list_list)):
-	# 	song_avg_list_dict[int(song_list[i])] = avg_list_list[i]
-	# for song in test_song_not_in_train:
-	# 	song_avg_list_dict[int(song)] = 0.68
-	# with open("../files/song_avg_list_crossval_dict.json",'w') as outfile:
-	# 	json.dump(song_avg_list_dict,outfile)
+	#subset = X_train[["media_id","is_listened"]]
+	#song_pivot = pd.DataFrame(pd.pivot_table(subset,values="is_listened",index="media_id",aggfunc=np.mean))
+	#song_avg_list_dict = dict(zip(song_pivot.index.values,song_pivot["is_listened"]))
+	#val_song_list = X_test["media_id"].unique().ravel()
+	#X_test_act = pd.read_csv("../data/test.csv")
+	#test_song_list = list(X_test_act["media_id"].unique().ravel())
+	#existing_song_list = set(song_avg_list_dict.keys())
+	#for song in val_song_list:
+	#	if song not in test_song_list:
+	#		test_song_list.append(song)
+	#for song in test_song_list:
+	#	if song not in existing_song_list:
+	#		song_avg_list_dict[song] = 0.68
+	#with open("../files/song_avg_list_crossval_dict.json",'w') as outfile:
+	#	json.dump(song_avg_list_dict,outfile)
 	if validation==1:
 		with open("../files/song_avg_list_crossval_dict.json") as datafile:
 			song_avg_list_dict = json.load(datafile)
 	else:
 		with open("../files/song_avg_list_dict.json") as datafile:
 			song_avg_list_dict = json.load(datafile)
-	X_train["song_list_avg"] = X_train["media_id"].apply(lambda x: song_avg_list_dict[str(x)])
-	X_test["song_list_avg"] = X_test["media_id"].apply(lambda x: song_avg_list_dict[str(x)])
+	X_train["song_list_avg_new"] = X_train["media_id"].apply(lambda x: song_avg_list_dict[str(x)])
+	X_test["song_list_avg_new"] = X_test["media_id"].apply(lambda x: song_avg_list_dict[str(x)])
+	X_train["song_list_avg"] = X_train["song_list_avg_new"]
+	X_test["song_list_avg"] = X_train["song_list_avg_new"]
+	del X_train["song_list_avg_new"]
+	del X_test["song_list_avg_new"]
+
+
 
 def add_is_listened_avg(X_train,X_test,validation):
-	# subset = X_train[["user_id","is_listened"]]
-	# user_pivot = pd.pivot_table(subset,values="is_listened",index="user_id",aggfunc=np.mean)
-	# user_avg_list_dict = dict()
-	# user_list = user_pivot.index.values
-	# avg_list_list = list(user_pivot)
-	# for i in range(0,len(avg_list_list)):
-	# 	user_avg_list_dict[user_list[i]] = avg_list_list[i]
-	# with open("../files/user_avg_dict.json","w") as outfile:
-	# 	json.dump(user_avg_list_dict,outfile)
-	if validation == 1:
-		with open("../files/user_avg_crossval_dict.json") as datafile:
-			user_avg_dict = json.load(datafile)
-	else:
-		with open("../files/user_avg_dict.json") as datafile:
-			user_avg_dict = json.load(datafile)
-
-	with open("../files/user_total_len_crossval_dict.json") as datafile:
-		user_total_len_dict = json.load(datafile)
-
-	def standard_deviation_cal(row):
-		user_id = row["user_id"]
-		avg = row["is_listened_avg"]
-		total_len = float(user_total_len_dict[str(int(user_id))])
-		return (avg*(1-avg))/total_len
-	
-	X_train["is_listened_avg"] = X_train["user_id"].apply(lambda x: user_avg_dict[str(x)])
-	X_test["is_listened_avg"] = X_test["user_id"].apply(lambda x: user_avg_dict[str(x)])
+	#subset = X_train[["user_id","is_listened"]]
+	#user_pivot = pd.DataFrame(pd.pivot_table(subset,values="is_listened",index="user_id",aggfunc=np.mean))
+	#user_avg_list_dict = dict(zip(user_pivot.index.values,user_pivot["is_listened"]))
+	#with open("../files/user_avg_dict_v5_val_set.json","w") as outfile:
+	#	json.dump(user_avg_list_dict,outfile)
+	#with open("../files/user_total_len_crossval_dict.json") as datafile:
+        #       user_total_len_dict = json.load(datafile)if validation == 0:
+	with open("../files/user_avg_dict_v5_val_set.json") as datafile:
+		user_avg_dict = json.load(datafile)
+	#with open("../files/user_total_len_crossval_dict.json") as datafile:
+	#	user_total_len_dict = json.load(datafile)
+        
+	user_dict_new = dict()
+	for key in user_avg_dict.keys():
+    		user_dict_new[int(key)] = user_avg_dict[key]
+	#def standard_deviation_cal(row):
+	#	user_id = row["user_id"]
+	#	avg = row["is_listened_avg"]
+	#	total_len = float(user_total_len_dict[str(int(user_id))])
+	#	return (avg*(1-avg))/total_len
+	user_set = set(user_dict_new.keys())
+	X_train["is_listened_avg_new"] = X_train["user_id"].apply(lambda x: user_dict_new[int(x)] if x in user_set else 0.68)
+	X_test["is_listened_avg_new"] = X_test["user_id"].apply(lambda x: user_dict_new[int(x)] if x in user_set else 0.68)
 	# X_train["is_listened_std"] = X_train.apply(standard_deviation_cal,axis=1) 
 	# X_test["is_listened_std"] = X_test.apply(standard_deviation_cal,axis=1)
+	X_train["is_listened_avg"] = X_train["is_listened_avg_new"]
+	X_test["is_listened_avg"]= X_test["is_listened_avg_new"]
+	del X_train["is_listened_avg_new"]
+	del X_test["is_listened_avg_new"]
 
 def add_is_listened_on_flow_avg(X_train,X_test):
 	with open("../files/user_both_type_listen_avg_crossval.json") as datafile:
@@ -551,6 +573,11 @@ def add_is_listened_on_flow_avg(X_train,X_test):
 	# user_0_list = user_pivot0.index.values
 	# avg_list0 = list(user_pivot0)
 	# user_pivot1 = pd.pivot_table(X_train[X_train.listen_type==1],values="is_listened",index="user_id",aggfunc=np.mean)
+	# user_1_list = user_pivot1.index.values
+	# avg_list1 = list(user_pivot1)
+	# user_1_list_dict = dict()
+	# print "creating individual dictionaries"
+	# for i in range(0,len(user_0_list)):
 	# user_1_list = user_pivot1.index.values
 	# avg_list1 = list(user_pivot1)
 	# user_1_list_dict = dict()
@@ -594,9 +621,5 @@ def add_user_total_len(X_train,X_test):
 	X_test["user_listened_len"] = X_test["user_id"].apply(lambda x: user_total_len_dict[str(x)])
 
 def one_hot_encoding_context(X_train,X_test):
-	# print X_train.context_type.value_counts()
-	# pivot_df = pd.DataFrame(pd.pivot_table(X_train,values="is_listened",index="context_type",aggfunc=[len,np.mean]))
-	# pivot_df.to_csv("../files/context_type_pivot.csv")
-	high_is_listened_contexts = set([10,51,30,29,64,7,25,56,22,54,52,44,33,36,59,14,27,35,47,26,16,63])
-	X_train["is_high_listened_context"] = X_train["context_type"].apply(lambda x: 1 if x in high_is_listened_contexts else 0)
-	X_test["is_high_listened_context"] = X_test["context_type"].apply(lambda x: 1 if x in high_is_listened_contexts else 0)
+	print X_train.context_type.value_counts()
+	pivot_df = pd.DataFrame(pd.pivot_table(X_train,values="is_listened",index="context_type",aggfunc=[len,np.mean]))

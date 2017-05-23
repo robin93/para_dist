@@ -7,7 +7,8 @@ def main():
 	# convert_extrainfo_json_to_table()
 	# create_validation_set()
 	# cal_aggregate_user_stats()
-	get_deezer_api_data()
+	#get_deezer_api_data()
+        create_listen_type1_validation_set()
 
 def get_deezer_api_data():
 	# frBTF0DSipIhniw3iv5PU5rbYT4CtRpGNb1MD4hb539MOVpynK2
@@ -155,6 +156,31 @@ def create_validation_set():
 			# 	break
 			if cnt%1000==0:
 				print cnt
+
+def create_listen_type1_validation_set():
+    import pandas as pd,numpy as np
+    X_train = pd.read_csv("../data/trainval_train_v4.csv")
+    X_val = pd.read_csv("../data/trainval_val_v4.csv")
+    X_train_val = X_train.append(X_val,ignore_index=False)
+    unique_users = X_train["user_id"].unique()
+    cnt = 0
+    pd.DataFrame(columns=X_train.columns).to_csv("../data/trainval_val_v5.csv",index=False)
+    pd.DataFrame(columns=X_train.columns).to_csv("../data/trainval_train_v5.csv",index=False)
+    for user in unique_users:
+	cnt += 1
+	print cnt
+        subset = X_train_val[((X_train_val.user_id==user) & (X_train_val.listen_type==1))]
+        if len(subset)>=1:
+            max_ts = np.max(subset['ts_listen'].ravel())
+            val_df = subset[subset.ts_listen==max_ts]
+            train_df = X_train_val[((X_train_val.user_id == user) & (X_train_val.ts_listen< max_ts))]
+	    val_df.to_csv("../data/trainval_val_v5.csv",mode='a',header=False,index=False)
+            train_df.to_csv("../data/trainval_train_v5.csv",mode='a',header=False,index=False)
+        else:
+            max_ts = np.max(X_train_val[X_train_val.user_id ==user]['ts_listen'].ravel())
+            val_df = X_train_val[((X_train_val.user_id ==user) & (X_train_val.ts_listen==max_ts))]
+            val_df.to_csv("../data/trainval_val_v5.csv",mode='a',header=False,index=False)
+	
 
 if __name__ == '__main__':
     main()

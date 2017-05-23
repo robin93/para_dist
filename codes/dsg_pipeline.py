@@ -20,6 +20,12 @@ def main():
     # X_train,X_test = transform_data(X_train),transform_data(X_test) 
     y = X_train['is_listened'].ravel()
     #fe.features_to_add(X_train,X_test,validation=is_validation)
+    #X_train.to_csv("../data/trainval_train_v6.csv",index=False)
+    #X_test.to_csv("../data/test_v6.csv",index=False)
+    #X_test.to_csv("../data/test_v3.csv",index=False)
+    #print list(X_train)
+    #print list(X_test)
+    #sys.exit()
     print "Normalizing high cordiality data"
     # normalize_high_cordiality_data()
     # transform_categorical_data()
@@ -58,11 +64,11 @@ def print_roc_auc_score(model,X_train,X_test,y_train_true):
 def prepare_submission(model,X_test):
     sub = pd.DataFrame(data = {'sample_id': X_test['sample_id'].ravel()})
     del X_test["sample_id"]
-    # xgtest = xgb.DMatrix(X_test)
-    # preds = model.predict(xgtest)
-    preds = model.predict_proba(X_test)
+    xgtest = xgb.DMatrix(X_test)
+    preds = model.predict(xgtest)
+    #preds = model.predict_proba(X_test)
     sub['is_listened'] = preds[:, 1]  
-    sub.to_csv("../submissions/submission_10May.csv", index = False, header = True)
+    sub.to_csv("../submissions/submission_23May_new_valset.csv", index = False, header = True)
 
 def transform_categorical_data():
     categorical = ['context_type', 'platform_name',
